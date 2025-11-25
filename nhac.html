@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🎵 Góc âm nhạc cá nhân</title>
+  <title>🎵 Góc âm nhạc của tôi</title>
   <style>
     body {
       background-color: #0e1726;
@@ -16,29 +16,25 @@
 
     h1 {
       color: #4fc3f7;
-      margin-bottom: 10px;
-    }
-
-    .input-area {
-      margin: 15px 0;
+      margin-bottom: 20px;
     }
 
     input[type="text"] {
       width: 70%;
-      padding: 8px;
+      padding: 10px;
       border-radius: 10px;
       border: none;
       outline: none;
       background-color: #1b2a3d;
       color: white;
-      font-size: 15px;
+      font-size: 16px;
     }
 
     .btn {
       background-color: #2a9d8f;
       border: none;
       color: white;
-      padding: 8px 14px;
+      padding: 9px 14px;
       border-radius: 8px;
       margin-left: 6px;
       cursor: pointer;
@@ -50,29 +46,17 @@
       background-color: #219080;
     }
 
-    #music-list {
-      margin-top: 15px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
     .song-item {
       background-color: #13202b;
       border-radius: 12px;
       padding: 10px;
       width: 90%;
       max-width: 500px;
-      margin: 8px 0;
+      margin: 10px auto;
       display: flex;
       justify-content: space-between;
       align-items: center;
       box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-    }
-
-    .song-item span {
-      font-size: 16px;
-      color: #fff;
     }
 
     iframe, audio {
@@ -88,142 +72,110 @@
       font-style: italic;
       color: #80cbc4;
     }
+
+    .nav-buttons {
+      margin-top: 40px;
+    }
+
+    .nav-buttons .btn {
+      margin: 5px;
+    }
   </style>
 </head>
 
 <body>
   <h1>🎧 Góc âm nhạc của tôi</h1>
 
-  <div class="input-area">
+  <div>
     <input type="text" id="music-link" placeholder="Dán link YouTube hoặc MP3 tại đây...">
-    <button class="btn" onclick="addLink()">Thêm nhạc</button>
+    <button class="btn" onclick="addSong()">Thêm</button>
   </div>
 
   <div id="music-list">
-    <p style="color:#ccc;">Chưa có bài nhạc nào 🎵</p>
+    <p style="color:#ccc;">Chưa có bài nhạc nào 🎶</p>
   </div>
 
   <p id="now-playing">🎶 Chưa phát bài nào</p>
-  <div id="audio-player"></div>
+  <div id="player"></div>
+
+  <div class="nav-buttons">
+    <button class="btn" onclick="window.location.href='index.html'">← Quay lại trang chính</button>
+    <button class="btn" onclick="window.location.href='index.html#relax'">← Quay lại Góc thư giãn</button>
+  </div>
 
   <script>
-    let db;
-    const dbName = "MusicLinksDB";
-    const storeName = "songs";
+    const songs = [];
 
-    // --- Khởi tạo IndexedDB ---
-    const request = indexedDB.open(dbName, 1);
-    request.onupgradeneeded = (e) => {
-      db = e.target.result;
-      if (!db.objectStoreNames.contains(storeName)) {
-        db.createObjectStore(storeName, { keyPath: "id", autoIncrement: true });
-      }
-    };
-    request.onsuccess = (e) => {
-      db = e.target.result;
-      loadSongs();
-    };
-
-    // --- Thêm link vào danh sách ---
-    function addLink() {
+    function addSong() {
       const link = document.getElementById("music-link").value.trim();
-      if (!link) return alert("⚠️ Vui lòng dán link YouTube hoặc link nhạc!");
+      if (!link) return alert("⚠️ Vui lòng nhập link nhạc!");
       const name = prompt("🎵 Nhập tên bài hát:", "Bài hát mới");
       if (!name) return;
-
-      const tx = db.transaction(storeName, "readwrite");
-      const store = tx.objectStore(storeName);
-      store.add({ name, link });
-      tx.oncomplete = () => {
-        document.getElementById("music-link").value = "";
-        loadSongs();
-      };
+      songs.push({ name, link });
+      document.getElementById("music-link").value = "";
+      renderList();
     }
 
-    // --- Hiển thị danh sách ---
-    function loadSongs() {
+    function renderList() {
       const list = document.getElementById("music-list");
       list.innerHTML = "";
-      const tx = db.transaction(storeName, "readonly");
-      const store = tx.objectStore(storeName);
-      const req = store.getAll();
-      req.onsuccess = () => {
-        const songs = req.result;
-        if (!songs.length) {
-          list.innerHTML = "<p style='color:#ccc;'>Chưa có bài nhạc nào 🎶</p>";
-          return;
-        }
-        songs.forEach(song => {
-          const div = document.createElement("div");
-          div.className = "song-item";
-          div.innerHTML = `
-            <span>🎵 ${song.name}</span>
-            <div>
-              <button class="btn" onclick="playSong(${song.id})">▶️</button>
-              <button class="btn" onclick="deleteSong(${song.id})">🗑️</button>
-            </div>`;
-          list.appendChild(div);
-        });
-      };
+      if (!songs.length) {
+        list.innerHTML = "<p style='color:#ccc;'>Chưa có bài nhạc nào 🎶</p>";
+        return;
+      }
+      songs.forEach((song, i) => {
+        const div = document.createElement("div");
+        div.className = "song-item";
+        div.innerHTML = `
+          <span>🎵 ${song.name}</span>
+          <div>
+            <button class="btn" onclick="play(${i})">▶️</button>
+            <button class="btn" onclick="remove(${i})">🗑️</button>
+          </div>`;
+        list.appendChild(div);
+      });
     }
 
-    // --- Phát nhạc hoặc video ---
-    function playSong(id) {
-      const tx = db.transaction(storeName, "readonly");
-      const store = tx.objectStore(storeName);
-      const req = store.get(id);
-      req.onsuccess = () => {
-        const song = req.result;
-        if (song) {
-          const player = document.getElementById("audio-player");
-          const now = document.getElementById("now-playing");
-          now.textContent = "🎶 Đang phát: " + song.name;
+    function play(index) {
+      const song = songs[index];
+      const player = document.getElementById("player");
+      const now = document.getElementById("now-playing");
+      now.textContent = "🎶 Đang phát: " + song.name;
 
-          // Xử lý link YouTube
-          if (song.link.includes("youtube.com") || song.link.includes("youtu.be")) {
-            let vid = song.link;
-            if (vid.includes("v=")) vid = vid.split("v=")[1].split("&")[0];
-            if (vid.includes("youtu.be/")) vid = vid.split("youtu.be/")[1];
-            player.innerHTML = `
-              <iframe src="https://www.youtube.com/embed/${vid}" frameborder="0" allowfullscreen></iframe>`;
-          }
-          // Xử lý file nhạc MP3, WAV, OGG
-          else if (song.link.endsWith(".mp3") || song.link.endsWith(".wav") || song.link.endsWith(".ogg")) {
-            player.innerHTML = `
-              <audio controls autoplay>
-                <source src="${song.link}" type="audio/mpeg">
-              </audio>`;
-          } else {
-            alert("⚠️ Link này không được hỗ trợ!");
-          }
-        }
-      };
+      // Phát YouTube
+      if (song.link.includes("youtube.com") || song.link.includes("youtu.be")) {
+        let vid = song.link;
+        if (vid.includes("v=")) vid = vid.split("v=")[1].split("&")[0];
+        if (vid.includes("youtu.be/")) vid = vid.split("youtu.be/")[1];
+        player.innerHTML = `
+          <iframe src="https://www.youtube.com/embed/${vid}" 
+                  frameborder="0" 
+                  allow="autoplay; encrypted-media" 
+                  allowfullscreen>
+          </iframe>`;
+      }
+
+      // Phát file nhạc trực tiếp (MP3/WAV/OGG)
+      else if (song.link.endsWith(".mp3") || song.link.endsWith(".wav") || song.link.endsWith(".ogg")) {
+        player.innerHTML = `
+          <audio controls autoplay>
+            <source src="${song.link}">
+            Trình duyệt của bạn không hỗ trợ phát nhạc.
+          </audio>`;
+      }
+
+      // Nếu link không hợp lệ
+      else {
+        player.innerHTML = `<p style="color:#f66;">⚠️ Link này không được hỗ trợ.</p>`;
+      }
     }
 
-    // --- Xóa bài hát ---
-    function deleteSong(id) {
-      const tx = db.transaction(storeName, "readwrite");
-      const store = tx.objectStore(storeName);
-      store.delete(id);
-      tx.oncomplete = () => {
-        loadSongs();
-        document.getElementById("audio-player").innerHTML = "";
-        document.getElementById("now-playing").textContent = "🗑️ Đã xóa bài hát.";
-      };
+    function remove(index) {
+      songs.splice(index, 1);
+      renderList();
+      document.getElementById("player").innerHTML = "";
+      document.getElementById("now-playing").textContent = "🗑️ Đã xóa bài hát.";
     }
   </script>
-  
-<!-- Nút quay lại trang chính -->
-<div style="text-align:center;margin:30px 0;">
-  <button class="back-btn" onclick="window.location.href='index.html'">← Quay lại trang chính</button>
-</div>
-<div style="text-align:center;margin:30px 0;position:relative;z-index:9999;">
-  <button class="back-btn" style="position:relative;z-index:9999;"
-    onclick="window.location.href='index.html#relax'">
-    ← Quay lại Góc thư giãn
-  </button>
-</div>
-
-
 </body>
 </html>

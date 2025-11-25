@@ -7,9 +7,9 @@
 <style>
   :root {
     --bg: #0e1726;
-    --card: #12221a;
-    --accent1: #f39c12;
-    --accent2: #2ecc71;
+    --card: #1a2333;
+    --accent1: #00b4d8;
+    --accent2: #ff9f43;
     --text: #e6eef8;
     --muted: #94a3b8;
   }
@@ -51,7 +51,7 @@
     margin: 10px auto;
     padding: 10px;
     border-radius: 10px;
-    max-width: 600px;
+    max-width: 760px;
     text-align: left;
   }
   .file-item {
@@ -68,7 +68,40 @@
     color: var(--accent2);
     cursor: pointer;
   }
-  .result { margin: 20px auto; color: var(--accent1); }
+  .result { margin: 10px 0 5px; color: var(--accent1); }
+  input[type="radio"] {
+    accent-color: var(--accent1);
+    transform: scale(1.15);
+    margin-right: 8px;
+  }
+  label.option-label { display:block; margin:6px 0; cursor:pointer; }
+  .small-muted { color: var(--muted); font-size:0.9rem; margin-top:6px; }
+  /*
+ * CSS cho hiệu ứng chuyển trang giữa các file HTML (Fade Out/Fade In)
+ */
+
+/* Lớp phủ chuyển đổi toàn màn hình */
+#page-transition-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* Sử dụng màu nền chính của bạn. Thay đổi nếu cần. */
+  background-color: var(--bg, #0e1726); 
+  opacity: 0;
+  visibility: hidden;
+  z-index: 9999;
+  /* Hiệu ứng chuyển đổi: 400ms */
+  transition: opacity 0.4s ease-in-out, visibility 0.4s ease-in-out;
+}
+
+/* 1. Kích hoạt hiệu ứng Fade Out khi chuyển trang (body.is-leaving) */
+/* 2. Kích hoạt hiệu ứng Fade In khi trang mới tải xong (khi class bị xóa) */
+body.is-leaving #page-transition-overlay {
+  opacity: 1;
+  visibility: visible;
+}
 </style>
 </head>
 <body>
@@ -117,7 +150,7 @@
     ]}
   ];
   
-  // ======================== NGÂN HÀNG CÂU HỎI ========================
+  // ======================== NGÂN HÀNG CÂU HỎI (BẢN ĐẦY ĐỦ) ========================
   const quiz = {
     // ===== CHƯƠNG 1 =====
     1: [
@@ -191,7 +224,7 @@
       { q: "Protein là?", a: "Polyme thiên nhiên của axit amin", opts: ["Axit","Este","Polyme thiên nhiên của axit amin","Hydrocacbon"] }
     ],
   
-    // ===== CÁC CHƯƠNG SAU: 5 CÂU CỐ ĐỊNH =====
+    // ===== CHƯƠNG 4 (5 câu mẫu) =====
     4: [
       { q: "Ankan là hydrocacbon?", a: "No, mạch hở", opts: ["No, mạch hở","Không no","Thơm","Vòng"] },
       { q: "Anken có công thức tổng quát?", a: "CnH2n", opts: ["CnH2n","CnH2n+2","CnH2n-2","CnH2n+1"] },
@@ -199,6 +232,7 @@
       { q: "Phản ứng cháy của hydrocacbon sinh ra?", a: "CO₂ và H₂O", opts: ["CO₂ và H₂O","CO và H₂","C và H₂O","CO₂ và O₂"] },
       { q: "Benzene thuộc loại hydrocacbon?", a: "Thơm", opts: ["No","Không no","Thơm","Vòng"] }
     ],
+    // ===== CHƯƠNG 5 (5 câu mẫu) =====
     5: [
       { q: "Ancol có nhóm chức?", a: "–OH", opts: ["–OH","–COOH","–CHO","–NH₂"] },
       { q: "Phenol có tính axit yếu vì?", a: "Nhóm –OH gắn với vòng benzen", opts: ["–OH gắn với benzen","–COOH","–NH₂","Không xác định"] },
@@ -206,6 +240,7 @@
       { q: "Ancol etylic có công thức?", a: "C₂H₅OH", opts: ["C₂H₅OH","CH₃OH","C₃H₇OH","C₄H₉OH"] },
       { q: "Phản ứng đặc trưng của ancol là?", a: "Tách nước", opts: ["Tách nước","Thế clo","Cộng H₂","Trùng hợp"] }
     ],
+    // ===== CHƯƠNG 6 (5 câu mẫu) =====
     6: [
       { q: "Andehit có nhóm chức?", a: "–CHO", opts: ["–COOH","–CHO","–OH","–CO–"] },
       { q: "Xeton có nhóm chức?", a: "–CO–", opts: ["–CO–","–CHO","–OH","–COOH"] },
@@ -274,46 +309,80 @@
   function loadVideo() {
     const link = document.getElementById("link").value;
     const videoArea = document.getElementById("videoArea");
-    if (link.includes("youtube")) {
-      const id = link.split("v=")[1];
-      videoArea.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}" allowfullscreen></iframe>`;
+    if (!link) {
+      videoArea.innerHTML = "<p class='small-muted'>Chưa có link.</p>";
+      return;
+    }
+    if (link.includes("youtube") || link.includes("youtu.be")) {
+      let id = "";
+      if (link.includes("v=")) {
+        id = link.split("v=")[1].split("&")[0];
+      } else if (link.includes("youtu.be/")) {
+        id = link.split("youtu.be/")[1].split("?")[0];
+      }
+      if (id) {
+        videoArea.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}" allowfullscreen></iframe>`;
+      } else {
+        videoArea.innerHTML = `<a href="${link}" target="_blank" style="color:var(--accent2)">Mở liên kết</a>`;
+      }
     } else {
       videoArea.innerHTML = `<a href="${link}" target="_blank" style="color:var(--accent2)">Mở tài liệu tại đây</a>`;
     }
   }
   
+  // ======= PHẦN TRẮC NGHIỆM (Ô CHỌN RADIO) =======
   function showQuiz(ch) {
     lessonDetail.classList.remove("active");
     contentDiv.classList.add("active");
     let qList = quiz[ch] || [];
+    // nếu ngân hàng lớn hơn 5 thì lấy ngẫu nhiên 5 câu
     if (qList.length > 5) {
       qList = qList.sort(() => Math.random() - 0.5).slice(0, 5);
     }
-  
+
     let html = `<h2>Bài tập trắc nghiệm</h2>`;
     qList.forEach((q, i) => {
-      html += `<div class="question" id="q${ch}_${i}">
-        <strong>${i + 1}. ${q.q}</strong><br>`;
-      q.opts.forEach(opt => {
-        html += `<div class="option" onclick="checkAnswer(${ch}, ${i}, '${opt}', this)">${opt}</div>`;
+      html += `
+        <div class="question" id="q${ch}_${i}">
+          <strong>${i + 1}. ${q.q}</strong><br>`;
+      q.opts.forEach((opt, j) => {
+        const optId = `opt_${ch}_${i}_${j}`;
+        // escape single quotes in opt to avoid JS string issues
+        const safeOpt = opt.replace(/'/g, "\\'");
+        html += `
+          <label class="option-label">
+            <input type="radio" name="q${ch}_${i}" id="${optId}" value="${opt}" onchange="checkAnswer(${ch}, ${i}, '${safeOpt}', this)">
+            ${opt}
+          </label>`;
       });
       html += `<div class='result'></div></div>`;
     });
     html += `<div class="back" onclick="backToLesson(${ch},1)">← Quay lại</div>`;
     contentDiv.innerHTML = html;
   }
-  
+
   function checkAnswer(ch, i, opt, el) {
-    const parent = el.parentElement;
-    const qText = parent.querySelector("strong").textContent.slice(3);
-    const q = quiz[ch].find(item => qText.includes(item.q.slice(0, 10)));
+    const parent = el.closest(".question");
+    const strong = parent.querySelector("strong");
+    const qText = strong ? strong.textContent.slice(3) : "";
+    // tìm câu hỏi đối chiếu chính xác bằng index i
+    const qList = quiz[ch] || [];
+    const q = qList.length > i ? qList[i] : qList.find(item => qText.includes(item.q.slice(0, 10)));
     const resultDiv = parent.querySelector(".result");
+
+    // Nếu đã có kết quả thì không làm gì thêm
     if (!resultDiv.textContent) {
-      if (opt === q.a) {
-        resultDiv.innerHTML = "<p style='color:lightgreen;'>✅ Đúng rồi!</p>";
+      if (q && opt === q.a) {
+        resultDiv.innerHTML = "<p style='color:lightgreen;'>✅ Chính xác!</p>";
+      } else if (q) {
+        resultDiv.innerHTML = `<p style='color:#ff6b6b;'>❌ Sai rồi, đáp án đúng là: <b>${q.a}</b></p>`;
       } else {
-        resultDiv.innerHTML = `<p style='color:#ff6b6b;'>❌ Sai, đáp án đúng là: <b>${q.a}</b></p>`;
+        resultDiv.innerHTML = `<p style='color:#ff6b6b;'>❌ Lỗi: không tìm thấy câu hỏi để kiểm tra.</p>`;
       }
+
+      // Vô hiệu hoá các lựa chọn sau khi chọn
+      const radios = parent.querySelectorAll("input[type=radio]");
+      radios.forEach(r => r.disabled = true);
     }
   }
   
@@ -326,12 +395,34 @@
     contentDiv.classList.remove("active");
     openLesson(ch, b);
   }
-  </script>
+  // ------------------ Chức năng chuyển trang đồng nhất ------------------
+
+// Hàm mới để xử lý chuyển trang có hiệu ứng
+function navigate(url) {
+  // 1. Kích hoạt hiệu ứng fade-out/overlay (400ms)
+  document.body.classList.add('is-leaving');
   
+  // 2. Chờ 400ms (phải khớp với CSS transition) rồi chuyển trang
+  setTimeout(() => {
+    window.location.href = url;
+  }, 400); 
+}
+
+// Xử lý hiệu ứng Fade In khi trang MỚI TẢI XONG
+document.addEventListener('DOMContentLoaded', () => {
+  // Đảm bảo lớp phủ chuyển trang biến mất (Fade In)
+  document.body.classList.remove('is-leaving');
+});
+
+// ---------------------------------------------------------------------
+</script>
+
 <!-- Nút quay lại trang chính -->
 <div style="margin-top:30px;">
   <button class="btn" onclick="window.location.href='index.html'">
     ← Quay lại trang chính
   </button>
+
+
 </body>
 </html>

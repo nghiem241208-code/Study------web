@@ -4,18 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Góc học tập của tôi</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #0e1726;
     --card: #1a2333;
-    --accent1: #ff9f43; /* Màu cam, dùng cho button pop-up */
-    --accent2: #00b4d8; /* Màu xanh, dùng cho tiêu đề */
+    --accent1: #ff9f43; /* Màu cam, dùng cho button pop-up/nhấn mạnh */
+    --accent2: #00b4d8; /* Màu xanh, dùng cho tiêu đề/liên kết */
     --text: #e6eef8;
     --muted: #b7c8e1;
     
     /* Variables từ widget nhắc nhở gốc, đổi tên để tránh trùng */
-    --rem-accent: #f39c12; /* Màu cam gốc của Nhắc nhở */
-    --rem-accent2: #3498db; /* Màu xanh gốc của Nhắc nhở */
+    --rem-accent: #f39c12; 
+    --rem-accent2: #3498db; 
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -30,566 +31,409 @@
     opacity: 0;
     transition: opacity 0.5s ease, transform 0.5s ease;
     transform: translateY(20px);
+    padding: 20px;
   }
   section.active {
     display: block;
     opacity: 1;
     transform: translateY(0);
   }
-  header {
-    text-align: center;
-    padding: 40px 20px 20px;
-  }
-  header h1 {
-    font-size: 2.4rem;
-    color: var(--accent2);
-  }
-  header p {
-    color: var(--muted);
-    margin-top: 8px;
-  }
+  header { margin-bottom: 25px; text-align: center; }
+  header h1 { color: var(--accent2); font-size: 2.5rem; margin-bottom: 5px;}
   .card-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 24px;
-    width: 90%;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
     max-width: 900px;
-    margin: 30px auto;
+    margin: 0 auto;
   }
   .card {
     background: var(--card);
-    border-radius: 20px;
-    padding: 32px;
-    text-align: center;
+    padding: 20px;
+    border-radius: 12px;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
-  }
-  .card:hover {
-    transform: translateY(-8px);
-    border: 1px solid var(--accent1);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.5);
-  }
-  .icon {
-    font-size: 3rem;
-    margin-bottom: 16px;
-  }
-  .study .icon { color: var(--accent2); }
-  .relax .icon { color: var(--accent1); }
-  .card h2 { margin: 0; font-size: 1.4rem; }
-  .card p { color: var(--muted); margin-top: 8px; font-size: 0.95rem; }
-
-  .back-btn {
-    display: inline-block;
-    margin: 20px auto;
-    color: var(--accent1);
-    text-decoration: none;
-    border: 1px solid var(--accent1);
-    padding: 10px 20px;
-    border-radius: 10px;
     transition: 0.3s;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   }
-  .back-btn:hover {
+  .card:hover { transform: scale(1.02); background: #253143; }
+  .icon { font-size: 2.5rem; margin-bottom: 10px; }
+  .card h2 { color: var(--accent1); font-size: 1.4rem; margin-bottom: 5px; }
+  .card p { color: var(--muted); font-size: 0.9rem; }
+  .back-btn {
+    display: block;
+    margin: 30px auto 0;
+    width: max-content;
+    padding: 10px 20px;
     background: var(--accent1);
     color: var(--bg);
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: 0.3s;
+  }
+  .back-btn:hover { opacity: 0.9; }
+
+  /* --- CSS cho Chuyển đổi Trang (Đồng nhất) --- */
+  #page-transition-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg, #0e1726);
+    opacity: 0;
+    visibility: hidden;
+    z-index: 9999;
+    transition: opacity 0.4s ease-in-out, visibility 0.4s ease-in-out;
+  }
+  body.is-leaving #page-transition-overlay {
+    opacity: 1;
+    visibility: visible;
   }
 
-  footer {
-    text-align: center;
-    color: var(--muted);
-    font-size: 0.8rem;
-    margin: 40px 0;
-  }
-
-  /* ========== CSS CỦA THỜI KHÓA BIỂU (TKB) ========== */
-  #tkb-wrap {
-      width: 90%; 
-      max-width: 1000px;
-      margin: 20px auto 40px auto;
-      background: var(--bg);
-      color: var(--text);
-      padding: 14px;
-      border-radius: 10px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.6);
-  }
-  #tkb-header{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
-  #tkb-header h2{margin:0;color:var(--accent2);font-size:18px;}
-  .tkb-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
-  .btn-small{background:var(--accent1);color:#08111a;border:none;padding:8px 10px;border-radius:8px;cursor:pointer;font-weight:600;}
-  /* Các button khác của TKB sử dụng .btn-ghost gốc */
-  .tkb-table{width:100%;border-collapse:collapse;margin-top:12px;max-width:1100px;}
-  .tkb-table th,.tkb-table td{border:1px solid rgba(255,255,255,0.04);padding:8px;text-align:center;font-size:13px;}
-  .tkb-table th{background:rgba(255,255,255,0.02);color:var(--accent2);}
-  .period{width:88px;font-weight:700;color:var(--accent1);background:rgba(255,255,255,0.01);}
-  .cell{min-height:42px;cursor:text;background:transparent;color:var(--text);}
-  .cell:focus{outline:2px solid rgba(0,180,216,0.14);box-shadow:0 2px 8px rgba(0,180,216,0.06) inset;}
-  .hint{color:var(--muted);font-size:13px;margin-top:8px;}
-
-  /* ========== CSS CỦA NHẮC NHỞ (POP-UP) ========== */
-  /* Sử dụng các biến gốc của widget nhắc nhở */
-  #reminder-box {
-      /* Biến thành pop-up ẩn */
-      display: none; 
-      position: fixed; 
-      top: 50%; 
-      left: 50%;
-      transform: translate(-50%, -50%); 
-      z-index: 2000; /* Z-index cao hơn */
-      max-width: 450px;
-      width: 90%;
-      /* Style gốc */
-      background: var(--bg);
-      color: var(--text);
-      padding: 16px;
-      border-radius: 10px;
-      box-shadow: 0 6px 30px rgba(0, 0, 0, 0.8);
-  }
-  #reminder-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.7);
-      z-index: 1999;
-  }
-  .rem-btn {
-      background: var(--rem-accent);
-      color: #08111a;
-      padding: 8px 14px;
+  /* --- CSS cho Mindmap --- */
+  .filebtn {
+      background: var(--accent2); /* Màu xanh */
       border: none;
+      color: var(--bg);
+      padding: 8px 12px;
       border-radius: 8px;
       cursor: pointer;
       font-weight: 600;
+      display: inline-block;
   }
-  .rem-btn-ghost {
-      background: transparent;
-      border: 1px solid #233a2b;
-      color: var(--muted);
-      padding: 6px 10px;
-      border-radius: 8px;
-      cursor: pointer;
+  #mindmapList {
+      display: grid;
+      gap: 15px;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 0 10px;
+      text-align: left;
   }
-  .rem-list { margin-top: 12px; }
-  .rem-item {
-      background: rgba(255, 255, 255, 0.02);
-      padding: 10px;
-      border-radius: 8px;
-      margin-bottom: 8px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+  .mindmap-card {
+    background: var(--card); 
+    padding: 16px; 
+    border-radius: 12px; 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    transition: 0.3s;
   }
-  .rem-item small { color: var(--muted); }
-  /* Toast */
-  #toast-area {
-      position: fixed;
-      right: 18px;
-      top: 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      z-index: 9999;
+  .mindmap-card:hover {
+    box-shadow: 0 0 0 2px var(--accent1);
   }
-  .toast {
-      background: #13202b;
-      padding: 12px 14px;
-      border-radius: 10px;
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
-      min-width: 240px;
-      border-left: 4px solid var(--rem-accent);
-  }
-  .toast strong { color: var(--rem-accent2); }
-  .toast small { color: var(--muted); }
 </style>
 </head>
 <body>
 
 <section id="home" class="active">
   <header>
-    <h1>Góc học tập của tôi</h1>
-    <p>Học tập hiệu quả – Thư giãn hợp lý – Cân bằng mỗi ngày</p>
+    <h1>👋 Trang chủ Góc học tập</h1>
+    <p>Chọn khu vực bạn muốn truy cập.</p>
   </header>
   <div class="card-container">
-    <div class="card study" onclick="showSection('study')">
-      <div class="icon">📘</div>
+    <div class="card" onclick="showSection('study')">
+      <div class="icon">📚</div>
       <h2>Góc học tập</h2>
-      <p>Truy cập các môn học, thời khóa biểu, và lịch nhắc nhở</p>
+      <p>Tài liệu học, bài tập trắc nghiệm các môn</p>
     </div>
-    <div class="card relax" onclick="showSection('relax')">
+    <div class="card" onclick="showSection('relax')">
       <div class="icon">🎧</div>
       <h2>Góc thư giãn</h2>
-      <p>Nghe nhạc và chơi trò chơi thư giãn sau giờ học</p>
+      <p>Trò chơi và trình phát nhạc</p>
     </div>
   </div>
-  <footer>© 2025 Góc học tập của tôi — Thiết kế bởi bạn & ChatGPT</footer>
 </section>
 
 <section id="study">
   <header>
-    <h1>📘 Góc học tập</h1>
-    <p>Chọn phần bạn muốn truy cập</p>
+    <h1>📚 Góc học tập</h1>
+    <p>Chọn môn học lớp 11 bạn muốn ôn luyện.</p>
   </header>
   <div class="card-container">
-    <div class="card" onclick="showSection('subjects')">
-      <div class="icon">📚</div>
-      <h2>Môn học</h2>
-      <p>Xem lý thuyết, bài tập và tài liệu</p>
+    <div class="card" onclick="navigate('toan11.html')">
+      <div class="icon">📐</div>
+      <h2>Toán học 11</h2>
+      <p>Đại số & Hình học</p>
     </div>
-    <div class="card" onclick="showSection('schedule')">
-      <div class="icon">📅</div>
-      <h2>Thời khóa biểu</h2>
-      <p>Quản lý lịch học 7 ngày – sáng và chiều</p>
+    <div class="card" onclick="navigate('ly11.html')">
+      <div class="icon">⚛️</div>
+      <h2>Vật Lý 11</h2>
+      <p>Luyện tập trắc nghiệm và xem lại kiến thức</p>
     </div>
-    <div class="card" onclick="showSection('reminder')">
-      <div class="icon">⏰</div>
-      <h2>Nhắc nhở</h2>
-      <p>Tạo ghi chú, nhắc kiểm tra, lịch ôn tập</p>
+    <div class="card" onclick="navigate('hoa11.html')">
+      <div class="icon">🧪</div>
+      <h2>Hóa học 11</h2>
+      <p>Chương trình Hóa học hữu cơ và vô cơ</p>
     </div>
-    <div class="card" onclick="showSection('links')">
-      <div class="icon">🌐</div>
-      <h2>Liên kết</h2>
-      <p>Truy cập nhanh các trang web học tập hữu ích</p>
+    <div class="card" onclick="navigate('van11.html')">
+      <div class="icon">📖</div>
+      <h2>Ngữ Văn 11</h2>
+      <p>Tác phẩm, luyện tập và lưu trữ tài liệu</p>
     </div>
-    
+    <div class="card" onclick="navigate('tienganh11.html')">
+      <div class="icon">🇬🇧</div>
+      <h2>Tiếng Anh 11</h2>
+      <p>Ngữ pháp, từ vựng và bài đọc</p>
+    </div>
+    <div class="card" onclick="window.open('https://classroom.google.com', '_blank')">
+      <div class="icon">🧑‍🏫</div>
+      <h2>Google Classroom</h2>
+      <p>Kết nối lớp học và giáo viên dễ dàng</p>
+    </div>
+    <div class="card" onclick="navigate('mindmap_grid.html')">
+      <div class="icon">🧠</div>
+      <h2>Sơ đồ Tư duy</h2>
+      <p>Lưu trữ các sơ đồ, tài liệu và ghi chú</p>
+    </div>
+   
   </div>
+  
   <a href="#" class="back-btn" onclick="showSection('home')">← Quay lại trang chủ</a>
 </section>
-
-<section id="subjects">
-  <header>
-    <h1>📚 Môn học</h1>
-    <p>Chọn môn bạn muốn học</p>
-  </header>
-  <div class="card-container">
-    <div class="card" onclick="window.location.href='toan11.html'">
-      <div class="icon">🧮</div>
-      <h2>Toán</h2>
-      <p>Vào học Toán 11 - Kết Nối Tri Thức</p>
-    </div>
-    <div class="card" onclick="window.location.href='ly11.html'">
-      <div class="icon">⚡</div>
-      <h2>Vật lý</h2>
-      <p>Vào học Vật lý 11 - Kết Nối Tri Thức</p>
-    </div>
-    <div class="card" onclick="window.location.href='hoa11.html'">
-      <div class="icon">⚗️</div>
-      <h2>Hóa học</h2>
-      <p>Vào học Hóa học 11 - Kết nối tri thức</p>
-    </div>
-    <div class="card" onclick="window.location.href='van11.html'">
-      <div class="icon">📘</div>
-      <h2>Ngữ văn</h2>
-      <p>Vào học Ngữ văn 11 - Kết nối tri thức</p>
-    </div>
-    <div class="card" onclick="window.location.href='tienganh11.html'">
-      <div class="icon">📘</div>
-      <h2>Tiếng Anh</h2>
-      <p>Vào học Tiếng Anh 11 - Kết nối tri thức</p>
-    </div>
-  </div>
-  <a href="#" class="back-btn" onclick="showSection('study')">← Quay lại Góc học tập</a>
-</section>
-
-<section id="schedule">
-  <header>
-    <h1>📅 Thời khóa biểu</h1>
-    <p>Nhập hoặc theo dõi lịch học 7 ngày</p>
-  </header>
   
-  <div id="tkb-wrap">
-    <div id="tkb-header">
-      <h2>🕓 Thời khóa biểu (Sáng / Chiều)</h2>
-      <div class="tkb-controls">
-        <button id="reset-tkb" class="btn-small">🗑️ Xóa toàn bộ</button>
-        <button id="export-tkb" class="btn-ghost">Xuất</button>
-        <button id="import-tkb" class="btn-ghost">Nhập</button>
-        <input id="import-file" type="file" accept=".json" style="display:none" />
-      </div>
-    </div>
-
-    <div style="overflow:auto">
-      <table class="tkb-table" id="tkb-table">
-        <thead>
-          <tr>
-            <th>Buổi / Tiết</th>
-            <th>Thứ 2</th><th>Thứ 3</th><th>Thứ 4</th><th>Thứ 5</th><th>Thứ 6</th><th>Thứ 7</th>
-          </tr>
-        </thead>
-        <tbody id="tkb-body"></tbody>
-      </table>
-    </div>
-    <div class="hint">Nhập trực tiếp môn vào ô. Dữ liệu tự lưu. Sáng: Tiết 1–5, Chiều: Tiết 6–10.</div>
-  </div>
-
-  <script>
-  (function(){
-    const TKB_KEY = 'tkb_v1';
-    const body = document.getElementById('tkb-body');
-
-    function build(){
-      body.innerHTML='';
-      for(let p=1;p<=10;p++){
-        const tr=document.createElement('tr');
-        const label=(p<=5?`Sáng ${p}`:`Chiều ${p}`);
-        tr.innerHTML=`<td class='period'>${label}</td>`+
-        [2,3,4,5,6,7].map(d=>`<td contenteditable='true' class='cell' data-day='${d}' data-period='${p}'></td>`).join('');
-        body.appendChild(tr);
-      }
-      bind();
-    }
-
-    function bind(){
-      document.querySelectorAll('.cell').forEach(c=>{
-        c.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();c.blur();}});
-        c.addEventListener('blur',save);
-      });
-    }
-
-    function save(){
-      const data={};
-      document.querySelectorAll('.cell').forEach(c=>{
-        const d=c.dataset.day,p=c.dataset.period;
-        data[d]=data[d]||{}; data[d][p]=c.innerText.trim();
-      });
-      localStorage.setItem(TKB_KEY,JSON.stringify(data));
-    }
-
-    function load(){
-      const raw=localStorage.getItem(TKB_KEY);
-      if(!raw)return;
-      try{
-        const obj=JSON.parse(raw);
-        document.querySelectorAll('.cell').forEach(c=>{
-          const d=c.dataset.day,p=c.dataset.period;
-          c.innerText=obj[d]?.[p]||'';
-        });
-      }catch{}
-    }
-
-    document.getElementById('reset-tkb').onclick=()=>{
-      if(confirm('Xóa toàn bộ TKB?')){localStorage.removeItem(TKB_KEY);build();}
-    };
-    document.getElementById('export-tkb').onclick=()=>{
-      const blob=new Blob([localStorage.getItem(TKB_KEY)||'{}'],{type:'application/json'});
-      const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='tkb.json';a.click();
-    };
-    document.getElementById('import-tkb').onclick=()=>document.getElementById('import-file').click();
-    document.getElementById('import-file').onchange=(e)=>{
-      const f=e.target.files[0];if(!f)return;
-      const r=new FileReader();r.onload=()=>{localStorage.setItem(TKB_KEY,r.result);build();load();};
-      r.readAsText(f);
-    };
-
-    build();load();
-  })();
-  </script>
-  
-  <a href="#" class="back-btn" onclick="showSection('study')">← Quay lại Góc học tập</a>
-</section>
-
-<section id="reminder">
-  <header>
-    <h1>⏰ Nhắc nhở</h1>
-    <p>Tạo kế hoạch và lưu ghi chú học tập</p>
-  </header>
-  
-  <div style="text-align:center; margin-bottom: 20px;">
-    <button id="open-reminder" class="rem-btn">
-        🔔 Mở Công cụ Nhắc nhở
-    </button>
-  </div>
-  
-  <a href="#" class="back-btn" onclick="showSection('study')">← Quay lại Góc học tập</a>
-
-  <div id="reminder-overlay"></div> 
-
-  <div id="reminder-box">
-    <h2 style="color:var(--rem-accent2);margin-top:0">🔔 Quản lý Nhắc kiểm tra</h2>
-    <button id="close-reminder" class="rem-btn-ghost" style="position: absolute; top: 10px; right: 10px; border:none;">
-        ✖
-    </button>
-    
-    <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:12px;">
-      <input id="rem-date" type="date" style="padding:8px;border-radius:6px;background:#08111a;border:1px solid #233a2b;color:var(--text);">
-      <input id="rem-subject" placeholder="Môn học" style="padding:8px;border-radius:6px;background:#08111a;border:1px solid #233a2b;color:var(--text);">
-      <input id="rem-note" placeholder="Ghi chú" style="padding:8px;border-radius:6px;background:#08111a;border:1px solid #233a2b;color:var(--text);flex:1;">
-      <button id="add-rem" class="rem-btn">Thêm</button>
-    </div>
-    <button id="clear-rem" class="rem-btn-ghost">Xóa tất cả</button>
-    <div class="rem-list" id="rem-list"></div>
-  </div>
-  <div id="toast-area"></div>
-
-  <script>
-  (function(){
-    const KEY='reminders_v1';
-    // Lấy các phần tử pop-up và nút
-    const reminderBox = document.getElementById('reminder-box');
-    const overlay = document.getElementById('reminder-overlay');
-    const openBtn = document.getElementById('open-reminder');
-    const closeBtn = document.getElementById('close-reminder');
-
-    // --- Chức năng mở/đóng pop-up ---
-    function openReminder() {
-        reminderBox.style.display = 'block';
-        overlay.style.display = 'block';
-        render(); // Render lại danh sách khi mở
-    }
-    function closeReminder() {
-        reminderBox.style.display = 'none';
-        overlay.style.display = 'none';
-    }
-    
-    // Gán sự kiện mở/đóng
-    if (openBtn) openBtn.onclick = openReminder;
-    if (closeBtn) closeBtn.onclick = closeReminder;
-    if (overlay) overlay.onclick = closeReminder; 
-
-    // --- Chức năng quản lý nhắc nhở ---
-    function load(){try{return JSON.parse(localStorage.getItem(KEY))||[]}catch{return []}}
-    function save(l){localStorage.setItem(KEY,JSON.stringify(l));render();}
-    
-    function render(){
-        // Chỉ render khi pop-up đang hiển thị (hoặc nếu cần chạy ngay khi khởi tạo)
-        // if(reminderBox.style.display !== 'block' && document.getElementById('rem-list').innerHTML !== '') return;
-        
-        const list=load();
-        const area=document.getElementById('rem-list');
-        if(!area) return; // Bảo vệ nếu area chưa load
-        area.innerHTML='';
-        if(!list.length){area.innerHTML='<div style=\"color:var(--muted)\">Chưa có nhắc nào.</div>';return;}
-        list.sort((a,b)=>a.date.localeCompare(b.date));
-        list.forEach((r,i)=>{
-          const d=document.createElement('div');d.className='rem-item';
-          // Sửa logic xóa để không cần reload trang
-          d.innerHTML=`<div><strong>${r.subject}</strong><br><small>${r.date} - ${r.note||''}</small></div><button class='rem-btn-ghost' onclick='(function(){
-                let arr=load();
-                arr.splice(${i},1);
-                localStorage.setItem(\"${KEY}\",JSON.stringify(arr));
-                render(); 
-            })();'>Xóa</button>`;
-          area.appendChild(d);
-        });
-    }
-
-    // Sự kiện Thêm
-    const addRemBtn = document.getElementById('add-rem');
-    if(addRemBtn) addRemBtn.onclick=()=>{
-      const d=document.getElementById('rem-date').value,
-            s=document.getElementById('rem-subject').value.trim(),
-            n=document.getElementById('rem-note').value.trim();
-      if(!d||!s){alert('Vui lòng nhập ngày và môn.');return;}
-      const arr=load();arr.push({date:d,subject:s,note:n,id:Date.now()});save(arr);
-      document.getElementById('rem-date').value='';document.getElementById('rem-subject').value='';document.getElementById('rem-note').value='';
-      toast('Đã thêm nhắc nhở', s + ' vào ngày ' + d);
-    };
-    
-    // Sự kiện Xóa tất cả
-    const clearRemBtn = document.getElementById('clear-rem');
-    if(clearRemBtn) clearRemBtn.onclick=()=>{if(confirm('Xóa toàn bộ nhắc?')){localStorage.removeItem(KEY);render();}};
-    
-    // Toast
-    function toast(t,m){const a=document.getElementById('toast-area');const d=document.createElement('div');d.className='toast';d.innerHTML=`<strong>${t}</strong><br><small>${m}</small>`;a.appendChild(d);setTimeout(()=>d.remove(),8000);}
-    
-    // Kiểm tra nhắc nhở (chạy ngầm)
-    function check(){
-      const today=new Date().toISOString().slice(0,10);
-      const arr=load();
-      let shouldSave = false;
-      arr.forEach(r=>{
-        if(r.date===today&&!r.shown){
-          toast('🔔 Nhắc kiểm tra hôm nay: '+r.subject,r.note||'');
-          r.shown=true;
-          shouldSave = true;
-        }
-      });
-      if (shouldSave) {
-          // Chỉ lưu lại trạng thái đã shown, không cần gọi render()
-          localStorage.setItem(KEY,JSON.stringify(arr));
-      }
-    }
-    
-    // Bắt đầu kiểm tra định kỳ (chạy ngầm dù pop-up đóng)
-    check();
-    setInterval(check, 60 * 1000);
-  })();
-  </script>
-  </section>
-  <section id="links">
-    <header>
-      <h1>🌐 Liên kết học tập</h1>
-      <p>Chọn trang web bạn muốn truy cập</p>
-    </header>
-  
-    <div class="card-container">
-      <div class="card" onclick="window.open('https://hocmai.vn', '_blank')">
-        <div class="icon">📘</div>
-        <h2>HOCMAI</h2>
-        <p>Nền tảng học trực tuyến phổ biến</p>
-      </div>
-      <div class="card" onclick="window.open('https://azota.vn', '_blank')">
-        <div class="icon">🧾</div>
-        <h2>Azota</h2>
-        <p>Nộp bài, làm bài kiểm tra trực tuyến</p>
-      </div>
-      <div class="card" onclick="window.open('https://vietjack.com', '_blank')">
-        <div class="icon">📚</div>
-        <h2>VietJack</h2>
-        <p>Tổng hợp bài giảng và lời giải SGK</p>
-      </div>
-      <div class="card" onclick="window.open('https://quizizz.com', '_blank')">
-        <div class="icon">🎮</div>
-        <h2>Quizizz</h2>
-        <p>Làm trắc nghiệm và trò chơi học tập</p>
-      </div>
-      <div class="card" onclick="window.open('https://classroom.google.com', '_blank')">
-        <div class="icon">🧑‍🏫</div>
-        <h2>Google Classroom</h2>
-        <p>Kết nối lớp học và giáo viên dễ dàng</p>
-      </div>
-    </div>
-  
-    <a href="#" class="back-btn" onclick="showSection('study')">← Quay lại Góc học tập</a>
-  </section>
-  
-
 <section id="relax">
   <header>
     <h1>🎧 Góc thư giãn</h1>
-    <p>Nghe nhạc và trò chơi học tập (đang phát triển)</p>
+    <p>Nghe nhạc và trò chơi học tập.</p>
   </header>
   <div class="card-container">
-    <div class="card" onclick="window.location.href='trochoi.html'">
+    <div class="card" onclick="navigate('trochoi.html')">
        <div class="icon">🎮</div>
        <h2>Trò chơi học tập</h2>
        <p>Chơi Snake Quiz để ôn lại kiến thức lớp 11</p>
     </div>
-    <div class="card" onclick="window.location.href='nhac.html'">
+    <div class="card" onclick="navigate('nhac.html')">
        <div class="icon">🎵</div>
        <h2>Nghe nhạc thư giãn</h2>
        <p>Mở trình phát nhạc để nghe MP3 yêu thích</p>
     </div>
+   
   </div>
   <a href="#" class="back-btn" onclick="showSection('home')">← Quay lại trang chủ</a>
 </section>
 
-<script>
-  function showSection(id) {
-    document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
-    document.getElementById(id).classList.add("active");
-    window.scrollTo({top:0,behavior:"smooth"});
-  }
-</script>
-<script>
-  window.addEventListener("load", () => {
-    if (window.location.hash === "#relax") {
-      showSection("relax");
-    }
-  });
-</script>
+<section id="mindmap">
+  <header>
+    <h1>🧠 Sơ đồ Tư duy & Ghi chú</h1>
+    <p>Lưu trữ ảnh, PDF và tạo các ô ghi chú (lưu cục bộ trên trình duyệt).</p>
+  </header>
+  
+  <div class="controls" style="max-width: 800px; margin: 20px auto; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+    <label class="filebtn">
+        Tải sơ đồ mới (.jpg, .png, .pdf, v.v.)
+        <input type="file" id="mindmapInput" style="display: none;" accept="image/*, application/pdf" multiple>
+    </label>
+    <button class="filebtn" onclick="createMindmapNote()" style="background: var(--accent1); color: var(--bg);">➕ Tạo Ghi chú/Ô mới</button>
+    <button class="ghost" id="mindmapClearAllBtn" style="color: #e74c3c; border: 1px solid #e74c3c; background: transparent; padding: 8px 12px; border-radius: 6px; cursor: pointer;">Xóa toàn bộ</button>
+  </div>
 
+  <div id="mindmapList">
+    </div>
+
+  <a href="#" class="back-btn" onclick="showSection('home')">← Quay lại trang chủ</a>
+</section>
+<div id="page-transition-overlay"></div>
+
+<script>
+  // ------------------ CHỨC NĂNG CHUYỂN ĐỔI SECTION NỘI BỘ (ĐÃ SỬA ĐỔI) ------------------
+  
+  // Hàm hiển thị section, đã tích hợp logic Mindmap
+  function showSection(id) {
+    // 1. Hook: Nếu là Mindmap, gọi hàm render dữ liệu
+    if (id === 'mindmap') {
+        renderMindmapList();
+    }
+    
+    // 2. Logic chuyển đổi mượt mà (Fade/Slide)
+    document.querySelectorAll('section').forEach(s => {
+      s.classList.remove('active');
+      s.style.opacity = 0;
+      s.style.transform = 'translateY(20px)';
+    });
+    const target = document.getElementById(id);
+    if (target) {
+      target.style.transform = 'translateY(0)';
+      target.classList.add('active');
+      // Timeout nhỏ để đảm bảo transition hoạt động
+      setTimeout(() => { target.style.opacity = 1; }, 10);
+    }
+  }
+  
+  // Khởi chạy mặc định
+  showSection('home');
+
+
+  // ------------------ CHỨC NĂNG CHUYỂN ĐỔI TRANG BÊN NGOÀI (ĐỒNG NHẤT) ------------------
+
+  // Hàm mới để xử lý chuyển trang có hiệu ứng (Fade Out)
+  function navigate(url) {
+    // 1. Kích hoạt hiệu ứng fade-out/overlay (400ms)
+    document.body.classList.add('is-leaving');
+    
+    // 2. Chờ 400ms rồi chuyển trang
+    setTimeout(() => {
+      window.location.href = url;
+    }, 400); 
+  }
+
+  // Xử lý hiệu ứng Fade In khi trang MỚI TẢI XONG
+  document.addEventListener('DOMContentLoaded', () => {
+    // Đảm bảo lớp phủ chuyển trang biến mất (Fade In)
+    document.body.classList.remove('is-leaving');
+  });
+
+  // ------------------ LOGIC SƠ ĐỒ TƯ DUY & GHI CHÚ (ĐÃ CẬP NHẬT) ------------------
+
+  const MINDMAP_KEY = 'mindmap_files_v2'; // Dùng key mới để tránh xung đột
+  let mindmapFiles = JSON.parse(localStorage.getItem(MINDMAP_KEY) || '[]');
+
+  // 1. Hàm tạo Ghi chú mới
+  window.createMindmapNote = function() {
+      const title = prompt("Nhập tiêu đề cho ô ghi chú mới:");
+      if (!title || title.trim() === "") return;
+
+      mindmapFiles.push({
+          type: 'note',
+          name: title.trim(),
+          text: "Nhấp vào nút 'Sửa' để thêm nội dung ghi chú...",
+          timestamp: Date.now()
+      });
+      localStorage.setItem(MINDMAP_KEY, JSON.stringify(mindmapFiles));
+      renderMindmapList();
+  }
+
+  // 2. Hàm chỉnh sửa Ghi chú
+  window.editMindmapNote = function(index) {
+      const currentNote = mindmapFiles[index];
+      if (currentNote.type !== 'note') return;
+
+      const newText = prompt(`Chỉnh sửa nội dung ghi chú:`, currentNote.text);
+
+      if (newText !== null) { // Kiểm tra nếu người dùng không bấm Cancel
+          const newTitle = prompt("Chỉnh sửa tiêu đề:", currentNote.name);
+          if (newTitle === null) return; 
+
+          currentNote.name = newTitle.trim() || currentNote.name;
+          currentNote.text = newText;
+          localStorage.setItem(MINDMAP_KEY, JSON.stringify(mindmapFiles));
+          renderMindmapList();
+      }
+  }
+
+  // 3. Hàm hiển thị danh sách sơ đồ tư duy (ĐÃ SỬA ĐỔI)
+  function renderMindmapList() {
+      const listEl = document.getElementById('mindmapList');
+      if (!listEl) return; 
+
+      listEl.innerHTML = '';
+      
+      // Đảo ngược array để hiển thị mới nhất trước
+      mindmapFiles.slice().reverse().forEach((f) => {
+          // Tìm index gốc để xóa/sửa chính xác
+          const originalIndex = mindmapFiles.findIndex(item => item.timestamp === f.timestamp);
+          
+          let cardContent = '';
+          let controls = '';
+          let icon = '';
+
+          if (f.type === 'file') {
+              icon = '🖼️ ';
+              cardContent = `
+                  <p style="font-size: 0.9em; color: var(--muted); margin-bottom: 10px;">Kích thước: ${Math.round(f.size / 1024)} KB</p>
+              `;
+              controls = `
+                  <button class='btn' onclick="window.open('${f.url}', '_blank')" style="background: var(--accent1); color: var(--bg);">Xem</button>
+              `;
+          } else if (f.type === 'note') {
+              icon = '📝 ';
+              cardContent = `
+                  <p style="font-size: 0.9em; color: var(--muted); margin-bottom: 10px; min-height: 40px; overflow: hidden; text-overflow: ellipsis;">${f.text}</p>
+              `;
+              controls = `
+                  <button class='btn' onclick='editMindmapNote(${originalIndex})' style="background: var(--accent1); color: var(--bg);">📝 Sửa</button>
+              `;
+          }
+          
+          const cardHtml = `
+              <div class="mindmap-card">
+                  <strong style="display: block; margin-bottom: 10px; color: var(--accent2); overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
+                      ${icon}${f.name}
+                  </strong> 
+                  ${cardContent}
+                  <div style='display: flex; gap: 10px; justify-content: flex-start;'>
+                      ${controls}
+                      <button class='ghost' onclick='deleteMindmapFile(${originalIndex})'>Xóa</button>
+                  </div>
+              </div>
+          `;
+          listEl.innerHTML += cardHtml;
+      });
+
+      if(mindmapFiles.length === 0) {
+          listEl.innerHTML = `<p style="text-align: center; color: var(--muted); grid-column: 1 / -1;">Chưa có sơ đồ tư duy/ghi chú nào được lưu trữ. Hãy tải lên hoặc tạo mới!</p>`;
+      }
+  }
+
+  // 4. Hàm xóa mục (ĐÃ SỬA ĐỔI để xử lý cả note và file)
+  window.deleteMindmapFile = function(index) {
+      if (!confirm("Bạn có chắc chắn muốn xóa mục này?")) return;
+      
+      // Giải phóng bộ nhớ của Blob URL nếu là file
+      if (mindmapFiles[index] && mindmapFiles[index].type === 'file' && mindmapFiles[index].url.startsWith('blob:')) {
+          URL.revokeObjectURL(mindmapFiles[index].url);
+      }
+      
+      mindmapFiles.splice(index, 1);
+      localStorage.setItem(MINDMAP_KEY, JSON.stringify(mindmapFiles));
+      renderMindmapList();
+  }
+
+
+  // 5. Bắt sự kiện tải file (ĐÃ SỬA ĐỔI để thêm type: 'file')
+  document.addEventListener('DOMContentLoaded', () => {
+      const inputEl = document.getElementById("mindmapInput");
+      const clearBtn = document.getElementById("mindmapClearAllBtn");
+
+      if(inputEl) {
+          inputEl.addEventListener("change", (e) => {
+              const newFiles = [...e.target.files];
+              
+              newFiles.forEach(f => {
+                  const url = URL.createObjectURL(f);
+                  mindmapFiles.push({
+                      type: 'file', // Thêm type để phân biệt với ghi chú
+                      name: f.name,
+                      size: f.size,
+                      url: url,
+                      timestamp: Date.now()
+                  });
+              });
+              
+              localStorage.setItem(MINDMAP_KEY, JSON.stringify(mindmapFiles));
+              renderMindmapList();
+              e.target.value = null; 
+          });
+      }
+
+      if(clearBtn) {
+          clearBtn.addEventListener("click", () => {
+              if (confirm("Xóa toàn bộ sơ đồ tư duy/ghi chú đã lưu? Hành động này không thể hoàn tác.")) {
+                  mindmapFiles.forEach(f => {
+                      if (f.type === 'file' && f.url.startsWith('blob:')) {
+                          URL.revokeObjectURL(f.url);
+                      }
+                  });
+                  
+                  localStorage.removeItem(MINDMAP_KEY);
+                  mindmapFiles = [];
+                  renderMindmapList();
+              }
+          });
+      }
+  });
+
+</script>
 
 </body>
 </html>

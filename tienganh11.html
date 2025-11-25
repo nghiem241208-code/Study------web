@@ -80,6 +80,32 @@
   }
   .answer{ margin-top:8px; color:var(--accent1); }
   pre.passage{background:#08111a;padding:12px;border-radius:8px;text-align:left;white-space:pre-wrap;max-width:820px;margin:0 auto}
+/*
+ * CSS cho hiệu ứng chuyển trang giữa các file HTML (Fade Out/Fade In)
+ */
+
+/* Lớp phủ chuyển đổi toàn màn hình */
+#page-transition-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* Sử dụng màu nền chính của bạn. Thay đổi nếu cần. */
+  background-color: var(--bg, #0e1726); 
+  opacity: 0;
+  visibility: hidden;
+  z-index: 9999;
+  /* Hiệu ứng chuyển đổi: 400ms */
+  transition: opacity 0.4s ease-in-out, visibility 0.4s ease-in-out;
+}
+
+/* 1. Kích hoạt hiệu ứng Fade Out khi chuyển trang (body.is-leaving) */
+/* 2. Kích hoạt hiệu ứng Fade In khi trang mới tải xong (khi class bị xóa) */
+body.is-leaving #page-transition-overlay {
+  opacity: 1;
+  visibility: visible;
+}
 </style>
 </head>
 <body>
@@ -434,6 +460,26 @@ function submitSection(unitId, section){
 
 function backToUnits(u){ lessonDetail.classList.remove('active'); openUnit(u); }
 function backToPart(u){ contentDiv.classList.remove('active'); openPart(u, lastOpened.part); }
+// ------------------ Chức năng chuyển trang đồng nhất ------------------
+
+// Hàm mới để xử lý chuyển trang có hiệu ứng
+function navigate(url) {
+  // 1. Kích hoạt hiệu ứng fade-out/overlay (400ms)
+  document.body.classList.add('is-leaving');
+  
+  // 2. Chờ 400ms (phải khớp với CSS transition) rồi chuyển trang
+  setTimeout(() => {
+    window.location.href = url;
+  }, 400); 
+}
+
+// Xử lý hiệu ứng Fade In khi trang MỚI TẢI XONG
+document.addEventListener('DOMContentLoaded', () => {
+  // Đảm bảo lớp phủ chuyển trang biến mất (Fade In)
+  document.body.classList.remove('is-leaving');
+});
+
+// ---------------------------------------------------------------------
 
 </script>
 <!-- Nút quay lại trang chính -->
@@ -441,5 +487,9 @@ function backToPart(u){ contentDiv.classList.remove('active'); openPart(u, lastO
   <button class="btn" onclick="window.location.href='index.html'">
     ← Quay lại trang chính
   </button>
+
+</div>
+
+
 </body>
 </html>
